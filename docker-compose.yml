@@ -28,12 +28,12 @@ services:
         container_name: mysql
         image: mysql:5.7
         volumes:
-            - ./storage/docker/mysql:/var/lib/mysql
+            - mysqlv:/var/lib/mysql
         environment:
             - "MYSQL_ROOT_PASSWORD=secret"
             - "MYSQL_USER=app"
             - "MYSQL_PASSWORD=secret"
-            - "MYSQL_DATABASE=app"
+            - "MYSQL_DATABASE=choronotest"
         ports:
             - "33061:3306"
     node:
@@ -44,3 +44,9 @@ services:
         volumes:
             - ./:/var/www
         tty: true
+
+# объявляем, что для mysql существует volume с именем mysqlv
+# и что теперь коннектится нужно не на папку, а на volume
+# это создаст более независимое и устойчивое поведение
+volumes:
+    mysqlv:
