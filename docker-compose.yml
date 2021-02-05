@@ -3,7 +3,7 @@ services:
     nginx:
         build:
             context: docker
-            dockerfile: ./nginx/Dockerfile
+            dockerfile: nginx/Dockerfile
         volumes:
             - ./:/var/www
             - ./docker/nginx/ssl:/etc/nginx/ssl
@@ -14,7 +14,7 @@ services:
     php-fpm:
         build:
             context: docker
-            dockerfile: ./php/Dockerfile
+            dockerfile: php/Dockerfile
         volumes:
             - ./:/var/www
         links:
@@ -56,7 +56,7 @@ services:
     node:
         build:
             context: docker
-            dockerfile: ./node/Dockerfile
+            dockerfile: node/Dockerfile
         volumes:
             - ./:/var/www
         tty: true
