@@ -1,6 +1,7 @@
 version: '3.7'
 services:
     nginx:
+        container_name: "${APP_NAME}__nginx"
         build:
             context: .
             dockerfile: nginx/Dockerfile
@@ -12,6 +13,7 @@ services:
         links:
             - php-fpm
     php-fpm:
+        container_name: "${APP_NAME}__php-fpm"
         build:
             context: .
             dockerfile: php/Dockerfile
@@ -23,6 +25,7 @@ services:
             - "DB_PORT=3306"
             - "DB_HOST=mysql"
     mysql:
+        container_name: "${APP_NAME}__mysql"
         image: mysql:5.7
         volumes:
             - mysql_volume:/var/lib/mysql
@@ -34,6 +37,7 @@ services:
         ports:
             - "${MYSQL_PORTS}:3306"
     phpmyadmin:
+        container_name: "${APP_NAME}__phpmyadmin"
         image: phpmyadmin/phpmyadmin
         environment:
             - PMA_ARBITRARY=1
