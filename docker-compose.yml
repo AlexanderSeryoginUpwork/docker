@@ -32,7 +32,7 @@ services:
             - "MYSQL_PASSWORD=?????"
             - "MYSQL_DATABASE=?????????????"
         ports:
-            - "MYSQL_PORT:3306"
+            - "????:3306"
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         environment:
