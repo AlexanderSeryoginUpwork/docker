@@ -2,18 +2,18 @@ version: '3.7'
 services:
     nginx:
         build:
-            context: .
+            context: ${SERVICES.NGINX.BUILD.CONTEXT}
             dockerfile: nginx/Dockerfile
         volumes:
             - ./:/var/www
             - ./nginx/ssl:/etc/nginx/ssl
         ports:
-            - "9876:443"
+            - "${NGINX_PORT}:443"
         links:
             - php-fpm
     php-fpm:
         build:
-            context: .
+            context: ${SERVICES.PHP-FPM.BUILD.CONTEXT}
             dockerfile: php/Dockerfile
         volumes:
             - ./:/var/www
@@ -25,30 +25,30 @@ services:
     mysql:
         image: mysql:5.7
         volumes:
-            - mysql_test_volume:/var/lib/mysql
+            - mysql_volume:/var/lib/mysql
         environment:
-            - "MYSQL_ROOT_PASSWORD=root"
-            - "MYSQL_USER=test"
-            - "MYSQL_PASSWORD=test"
-            - "MYSQL_DATABASE=test"
+            - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
+            - "MYSQL_USER=${MYSQL_USER}"
+            - "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
+            - "MYSQL_DATABASE=${MYSQL_DATABASE}"
         ports:
-            - "2345:3306"
+            - "${MYSQL_PORTS}:3306"
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         environment:
             - PMA_ARBITRARY=1
         restart: always
         ports:
-            - 3456:80
+            - ${PHPMYADMIN_PORT}:80
         links:
             - mysql
     node:
         build:
-            context: .
+            context: ${SERVICES.MYSQL.BUILD.CONTEXT}
             dockerfile: node/Dockerfile
         volumes:
             - ./:/var/www
         tty: true
 
 volumes:
-    mysql_test_volume:
+    mysql_volume:
