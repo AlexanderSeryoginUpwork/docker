@@ -6,9 +6,9 @@ services:
             dockerfile: nginx/Dockerfile
         volumes:
             - ./:/var/www
-            - ./docker/nginx/ssl:/etc/nginx/ssl
+            - ./nginx/ssl:/etc/nginx/ssl
         ports:
-            - "????:443"
+            - "9876:443"
         links:
             - php-fpm
     php-fpm:
@@ -25,21 +25,21 @@ services:
     mysql:
         image: mysql:5.7
         volumes:
-            - mysql_volume:/var/lib/mysql
+            - mysql_test_volume:/var/lib/mysql
         environment:
-            - "MYSQL_ROOT_PASSWORD=?????"
-            - "MYSQL_USER=?????"
-            - "MYSQL_PASSWORD=?????"
-            - "MYSQL_DATABASE=?????????????"
+            - "MYSQL_ROOT_PASSWORD=root"
+            - "MYSQL_USER=test"
+            - "MYSQL_PASSWORD=test"
+            - "MYSQL_DATABASE=test"
         ports:
-            - "????:3306"
+            - "2345:3306"
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         environment:
             - PMA_ARBITRARY=1
         restart: always
         ports:
-            - ????:80
+            - 3456:80
         links:
             - mysql
     node:
@@ -51,4 +51,4 @@ services:
         tty: true
 
 volumes:
-    mysql_volume:
+    mysql_test_volume:
