@@ -2,7 +2,7 @@ version: '3.7'
 services:
     nginx:
         build:
-            context: ${SERVICES.NGINX.BUILD.CONTEXT}
+            context: .
             dockerfile: nginx/Dockerfile
         volumes:
             - ./:/var/www
@@ -13,7 +13,7 @@ services:
             - php-fpm
     php-fpm:
         build:
-            context: ${SERVICES.PHP-FPM.BUILD.CONTEXT}
+            context: .
             dockerfile: php/Dockerfile
         volumes:
             - ./:/var/www
@@ -44,7 +44,7 @@ services:
             - mysql
     node:
         build:
-            context: ${SERVICES.MYSQL.BUILD.CONTEXT}
+            context: .
             dockerfile: node/Dockerfile
         volumes:
             - ./:/var/www
