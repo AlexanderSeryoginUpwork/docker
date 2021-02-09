@@ -47,6 +47,7 @@ services:
         links:
             - mysql
     node:
+        container_name: "${APP_NAME}__node"
         build:
             context: ../
             dockerfile: docker/node/Dockerfile
