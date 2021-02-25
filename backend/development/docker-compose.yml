@@ -3,7 +3,7 @@ services:
     nginx:
         container_name: "${APP_NAME}__nginx"
         build:
-            context: ../..
+            context: ../../..
             dockerfile: nginx/Dockerfile
         volumes:
             - ../:/var/www
@@ -15,7 +15,7 @@ services:
     php-fpm:
         container_name: "${APP_NAME}__php"
         build:
-            context: ../..
+            context: ../../..
             dockerfile: php/Dockerfile
         volumes:
             - ../:/var/www
@@ -49,7 +49,7 @@ services:
     node:
         container_name: "${APP_NAME}__node"
         build:
-            context: ../..
+            context: ../../..
             dockerfile: node/Dockerfile
         volumes:
             - ../:/var/www
