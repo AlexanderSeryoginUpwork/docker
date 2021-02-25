@@ -1,0 +1,65 @@
+version: '3.9'
+services:
+    nginx:
+        container_name: "${APP_NAME}__nginx"
+        build:
+            context: ../..
+            dockerfile: nginx/Dockerfile
+        volumes:
+            - ../:/var/www
+            - ./nginx/ssl:/etc/nginx/ssl
+        ports:
+            - "${NGINX_PORT}:443"
+        links:
+            - php-fpm
+    php-fpm:
+        container_name: "${APP_NAME}__php"
+        build:
+            context: ../..
+            dockerfile: php/Dockerfile
+        volumes:
+            - ../:/var/www
+        links:
+            - mysql
+        environment:
+            - "DB_PORT=3306"
+            - "DB_HOST=mysql"
+    mysql:
+        container_name: "${APP_NAME}__mysql"
+        image: mysql:5.7
+        volumes:
+            - mysql_volume:/var/lib/mysql
+        environment:
+            - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
+            - "MYSQL_USER=${MYSQL_USER}"
+            - "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
+            - "MYSQL_DATABASE=${MYSQL_DATABASE}"
+        ports:
+            - "${MYSQL_PORTS}:3306"
+    phpmyadmin:
+        container_name: "${APP_NAME}__phpmyadmin"
+        image: phpmyadmin/phpmyadmin
+        environment:
+            - PMA_ARBITRARY=1
+        restart: always
+        ports:
+            - ${PHPMYADMIN_PORT}:80
+        links:
+            - mysql
+    node:
+        container_name: "${APP_NAME}__node"
+        build:
+            context: ../..
+            dockerfile: node/Dockerfile
+        volumes:
+            - ../:/var/www
+        tty: true
+
+volumes:
+    mysql_volume:
+
+
+# ./ - current
+# ../ - previous
+# ../../ - previous previous
+# / - root

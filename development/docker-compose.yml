@@ -3,8 +3,8 @@ services:
     nginx:
         container_name: "${APP_NAME}__nginx"
         build:
-            context: ../
-            dockerfile: docker/nginx/Dockerfile
+            context: ../..
+            dockerfile: nginx/Dockerfile
         volumes:
             - ../:/var/www
             - ./nginx/ssl:/etc/nginx/ssl
@@ -15,8 +15,8 @@ services:
     php-fpm:
         container_name: "${APP_NAME}__php"
         build:
-            context: ../
-            dockerfile: docker/php/Dockerfile
+            context: ../..
+            dockerfile: php/Dockerfile
         volumes:
             - ../:/var/www
         links:
@@ -49,8 +49,8 @@ services:
     node:
         container_name: "${APP_NAME}__node"
         build:
-            context: ../
-            dockerfile: docker/node/Dockerfile
+            context: ../..
+            dockerfile: node/Dockerfile
         volumes:
             - ../:/var/www
         tty: true
