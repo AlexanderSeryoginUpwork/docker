@@ -2,20 +2,20 @@ version: '3.9'
 services:
     nginx:
         build:
-            context: ./example/docker/development
+            context: ./${APP_NAME}/docker/development
             dockerfile: nginx/Dockerfile
         volumes:
-            - ./example:/app
+            - ./${APP_NAME}:/app
         depends_on:
             - php-fpm
         ports:
             - "8080:80"
     php-fpm:
         build:
-            context: ./example/docker/development
+            context: ./${APP_NAME}/docker/development
             dockerfile: php-fpm/Dockerfile
         volumes:
-            - ./example:/app
+            - ./${APP_NAME}:/app
         depends_on:
             - postgres
             - redis
@@ -25,10 +25,10 @@ services:
             - centrifugo
     php-cli:
         build:
-            context: ./example/docker/development
+            context: ./${APP_NAME}/docker/development
             dockerfile: php-cli/Dockerfile
         volumes:
-            - ./example:/app
+            - ./${APP_NAME}:/app
             - composer:/root/.composer/cache
         depends_on:
             - postgres
@@ -39,10 +39,10 @@ services:
             - centrifugo
     queue-worker:
         build:
-            context: ./example/docker/development
+            context: ./${APP_NAME}/docker/development
             dockerfile: php-cli/Dockerfile
         volumes:
-            - ./example:/app
+            - ./${APP_NAME}:/app
             - composer:/root/.composer/cache
         depends_on:
             - postgres
@@ -55,13 +55,13 @@ services:
     node-watch:
         image: node:12.7-alpine
         volumes:
-            - ./example:/app
+            - ./${APP_NAME}:/app
         working_dir: /app
         command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && npm run watch"
     node:
         image: node:12.7-alpine
         volumes:
-            - ./example:/app
+            - ./${APP_NAME}:/app
         working_dir: /app
     postgres:
         image: postgres:11.2-alpine
