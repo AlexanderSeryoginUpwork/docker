@@ -1,8 +1,8 @@
 FROM nginx:1.10
 
-ADD default.conf /etc/nginx/conf.d/default.conf
+ADD ./docker/development/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-COPY ssl/ssl-cert-snakeoil.key /etc/nginx/ssl/ssl-cert-snakeoil.key
-COPY ssl/ssl-cert-snakeoil.pem /etc/nginx/ssl/ssl-cert-snakeoil.pem
+COPY ./docker/development/nginx/ssl/ssl-cert-snakeoil.key /etc/nginx/ssl/ssl-cert-snakeoil.key
+COPY ./docker/development/nginx/ssl/ssl-cert-snakeoil.pem /etc/nginx/ssl/ssl-cert-snakeoil.pem
 
-WORKDIR /var/www
+WORKDIR /var/www/html

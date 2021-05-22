@@ -1,11 +1,10 @@
-FROM php:7.3-fpm
+FROM php:7.4-fpm
 
 RUN pecl install -o -f redis \
     && rm -rf /tmp/pear \
     && docker-php-ext-enable redis
 
-RUN apt-get update && apt-get install -y libpq-dev \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo_pgsql
+RUN apt-get update && apt-get install -y libpq-dev unzip libzip-dev mariadb-client \
+    && docker-php-ext-install pdo_mysql zip
 
-WORKDIR /app
+WORKDIR /var/www/html

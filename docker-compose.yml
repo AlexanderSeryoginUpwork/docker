@@ -2,77 +2,41 @@ version: '3.9'
 services:
     nginx:
         build:
-            context: ./${APP_NAME}/docker/development
-            dockerfile: nginx/Dockerfile
+            context: .
+            dockerfile: docker/development/nginx/Dockerfile
         volumes:
-            - ./${APP_NAME}:/app
+            - ./src:/var/www/html
         depends_on:
             - php-fpm
         ports:
-            - "8080:80"
+            - "8082:80"
+
     php-fpm:
         build:
-            context: ./${APP_NAME}/docker/development
-            dockerfile: php-fpm/Dockerfile
+            context: .
+            dockerfile: docker/development/php-fpm/Dockerfile
         volumes:
-            - ./${APP_NAME}:/app
-        depends_on:
-            - postgres
-            - redis
-            - queue-redis
-            - storage
-            - mailer
-            - centrifugo
+            - ./src:/var/www/html
+
     php-cli:
         build:
-            context: ./${APP_NAME}/docker/development
-            dockerfile: php-cli/Dockerfile
+            context: .
+            dockerfile: docker/development/php-cli/Dockerfile
         volumes:
-            - ./${APP_NAME}:/app
+            - ./src:/var/www/html
             - composer:/root/.composer/cache
-        depends_on:
-            - postgres
-            - redis
-            - queue-redis
-            - storage
-            - mailer
-            - centrifugo
-    queue-worker:
-        build:
-            context: ./${APP_NAME}/docker/development
-            dockerfile: php-cli/Dockerfile
-        volumes:
-            - ./${APP_NAME}:/app
-            - composer:/root/.composer/cache
-        depends_on:
-            - postgres
-            - redis
-            - queue-redis
-            - storage
-            - mailer
-            - centrifugo
-        command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && php bin/console messenger:consume async -vv"
-    node-watch:
-        image: node:12.7-alpine
-        volumes:
-            - ./${APP_NAME}:/app
-        working_dir: /app
-        command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && npm run watch"
+        tty: true
+
     node:
         image: node:12.7-alpine
         volumes:
-            - ./${APP_NAME}:/app
-        working_dir: /app
-    postgres:
-        image: postgres:11.2-alpine
-        volumes:
-            - postgres:/var/lib/postgresql/data
-        environment:
-            POSTGRES_USER: app
-            POSTGRES_PASSWORD: secret
-            POSTGRES_DB: app
+            - ./src/:/var/www/html
+        working_dir: /var/www/html/angular
+        tty: true
         ports:
-            - "54321:5432"
+            - "8088:5000"
+
+
     redis:
         image: redis:5.0-alpine
         volumes:
@@ -84,50 +48,54 @@ services:
             - '--save 300 10'
             - '--save 60 10000'
             - '--requirepass secret'
+
     queue-redis:
         image: redis:5.0-alpine
         volumes:
             - queue-redis:/data
 
-    storage:
-        build:
-            context: ./storage/docker/development
-            dockerfile: nginx/Dockerfile
-        volumes:
-            - ./storage:/app
-        ports:
-            - "8081:80"
-    storage-ftp:
-        image: stilliard/pure-ftpd
+    mysql:
+        image: mysql:5.7
         environment:
-            FTP_USER_NAME: app
-            FTP_USER_PASS: secret
-            FTP_USER_HOME: /app
-        volumes:
-            - ./storage/public:/app
-
-    mailer:
-        image: mailhog/mailhog
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: priceshape
+            MYSQL_USER: user
+            MYSQL_PASSWORD: password
         ports:
-            - "8082:8025"
+            - "6033:3306"
+        volumes:
+            - dbdata:/var/lib/mysql
 
-    centrifugo:
-        image: centrifugo/centrifugo:v2.2
-        ulimits:
-            nofile:
-                soft: 65536
-                hard: 65536
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        links:
+            - mysql
         environment:
-            CENTRIFUGO_SECRET: secret
-            CENTRIFUGO_API_KEY: secret
-        volumes:
-            - ./centrifugo/docker/development/centrifugo:/centrifugo
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+            PMA_ARBITRARY: 1
         ports:
-            - "8083:8000"
-        command: centrifugo --admin --admin_insecure
+            - 8081:80
+
+#    manticore:
+#        container_name: priceshape_manticore
+##        image: manticoresearch/manticore:nodemode
+#        build:
+#            context: .
+#            dockerfile: docker/development/manticore/Dockerfile
+#        restart: always
+#        ulimits:
+#            nproc: 65535
+#            nofile:
+#                soft: 65535
+#                hard: 65535
+#            memlock:
+#                soft: -1
+#                hard: -1
+
 
 volumes:
-    postgres:
     redis:
     queue-redis:
     composer:
+    dbdata:
